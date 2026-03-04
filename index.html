@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找办公室</title>
+    <style>
+        :root {
+            --bg-primary: #F5F5F7;
+            --text-primary: #1D1D1F;
+            --text-secondary: #86868B;
+            --accent: #007AFF;
+            --accent-light: #E5F1FF;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            --card-shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --radius-large: 20px;
+            --radius-medium: 12px;
+            --radius-pill: 999px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 顶部标题区 */
+        .hero {
+            background: white;
+            padding: 60px 20px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .hero-title {
+            font-size: 34px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .hero-subtitle {
+            font-size: 17px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* 搜索框 */
+        .search-container {
+            background: var(--bg-primary);
+            padding: 16px 20px;
+            border-radius: var(--radius-medium);
+            margin: 0 20px 16px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: var(--radius-pill);
+            padding: 12px 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            opacity: 0.5;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 17px;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* 横向胶囊筛选 */
+        .filter-chips {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .filter-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            flex-shrink: 0;
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            color: var(--text-secondary);
+            border: 1px solid #E5E5E5;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .chip:hover {
+            background: #F5F5F7;
+        }
+
+        .chip.active {
+            background: var(--text-primary);
+            color: white;
+            border-color: var(--text-primary);
+        }
+
+        /* 对比按钮 */
+        .compare-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px 20px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+            box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.08);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 200;
+        }
+
+        .compare-bar.visible {
+            transform: translateY(0);
+        }
+
+        .compare-btn-full {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-medium);
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .compare-btn-full:active {
+            transform: scale(0.98);
+            background: #0066D6;
+        }
+
+        /* 房源卡片 */
+        .office-list {
+            padding: 0 20px 100px;
+        }
+
+        .office-card {
+            background: white;
+            border-radius: var(--radius-large);
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardEnter 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+
+        .office-card:hover {
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        @keyframes cardEnter {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .office-card:nth-child(1) { animation-delay: 0s; }
+        .office-card:nth-child(2) { animation-delay: 0.08s; }
+        .office-card:nth-child(3) { animation-delay: 0.16s; }
+        .office-card:nth-child(4) { animation-delay: 0.24s; }
+        .office-card:nth-child(5) { animation-delay: 0.32s; }
+
+        .office-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .office-image:hover {
+            transform: scale(1.02);
+        }
+
+        .office-image-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .office-content {
+            padding: 20px;
+        }
+
+        .office-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .office-config {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .office-subway {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .office-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .office-price span {
+            font-size: 15px;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+
+        .office-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .compare-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .compare-checkbox input {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .compare-checkbox span {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .detail-btn {
+            padding: 10px 24px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border: none;
+            border-radius: var(--radius-pill);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .detail-btn:active {
+            transform: scale(0.96);
+            background: #D0E8FF;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            margin: 20px;
+            margin-top: 60px;
+            border-radius: var(--radius-large);
+            height: calc(100% - 80px);
+            overflow-y: auto;
+            animation: modalSlideUp 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #F0F0F0;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: none;
+            font-size: 18px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #E8E8ED;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .detail-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: var(--radius-medium);
+            margin-bottom: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+        }
+
+        .detail-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .detail-tag {
+            background: var(--bg-primary);
+            padding: 8px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .detail-tag strong {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .detail-pros-cons {
+            display: grid;
+            gap: 16px;
+        }
+
+        .detail-pros, .detail-cons {
+            padding: 16px;
+            border-radius: var(--radius-medium);
+        }
+
+        .detail-pros {
+            background: #E8F5E9;
+        }
+
+        .detail-cons {
+            background: #FFEBEE;
+        }
+
+        .detail-pros h4, .detail-cons h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .detail-pros h4 {
+            color: #2E7D32;
+        }
+
+        .detail-cons h4 {
+            color: #C62828;
+        }
+
+        .detail-pros ul, .detail-cons ul {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .detail-pros li, .detail-cons li {
+            padding: 4px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .detail-pros li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2E7D32;
+            font-weight: bold;
+        }
+
+        .detail-cons li::before {
+            content: "✗";
+            position: absolute;
+            left: 0;
+            color: #C62828;
+            font-weight: bold;
+        }
+
+        /* 对比卡片 */
+        .compare-scroll {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 16px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .compare-card {
+            flex-shrink: 0;
+            width: 280px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-medium);
+            padding: 20px;
+        }
+
+        .compare-card h3 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .compare-row {
+            margin-bottom: 14px;
+        }
+
+        .compare-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            margin-bottom: 4px;
+        }
+
+        .compare-value {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* 底部安全区域 */
+        .safe-area-bottom {
+            height: env(safe-area-inset-bottom, 0);
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1 class="hero-title">找办公室</h1>
+        <p class="hero-subtitle" id="resultCount">5 个优质空间</p>
+    </div>
+
+    <div class="search-container">
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+            </svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索大厦、房型...">
+        </div>
+    </div>
+
+    <div class="filter-chips" id="filterChips">
+        <!-- 筛选胶囊将通过JavaScript动态生成 -->
+    </div>
+
+    <div class="office-list" id="officeList">
+        <!-- 房源卡片将通过JavaScript动态生成 -->
+    </div>
+
+    <div class="compare-bar" id="compareBar">
+        <button class="compare-btn-full" onclick="showComparison()">
+            比较 (<span id="compareCount">0</span>)
+        </button>
+    </div>
+
+    <!-- 详情模态框 -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="detailTitle">房源详情</h2>
+                <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+            </div>
+            <div class="modal-body" id="detailBody">
+            </div>
+        </div>
+    </div>
+
+    <!-- 比较模态框 -->
+    <div id="compareModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">房源对比</h2>
+                <button class="modal-close" onclick="closeModal('compareModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="compare-scroll" id="compareGrid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let officesData = [];
+        let selectedOffices = new Set();
+        let currentFilter = 'all';
+
+        async function loadData() {
+            try {
+                const response = await fetch('houses.json');
+                const data = await response.json();
+                officesData = data.offices;
+                initFilterChips();
+                renderOffices(officesData);
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                document.getElementById('officeList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <p>数据加载失败，请刷新页面重试</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 初始化筛选胶囊
+        function initFilterChips() {
+            const configs = [...new Set(officesData.map(office => office.spaceConfig))];
+            const chipsHtml = `
+                <div class="chip active" data-filter="all">全部</div>
+                ${configs.map(config => `<div class="chip" data-filter="${config}">${config}</div>`).join('')}
+            `;
+            document.getElementById('filterChips').innerHTML = chipsHtml;
+        }
+
+        function renderOffices(offices) {
+            const list = document.getElementById('officeList');
+            
+            if (offices.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <p>没有找到符合条件的房源</p>
+                    </div>
+                `;
+                document.getElementById('resultCount').textContent = '0 个优质空间';
+                return;
+            }
+
+            document.getElementById('resultCount').textContent = `${offices.length} 个优质空间`;
+
+            list.innerHTML = offices.map((office, index) => `
+                <div class="office-card" style="animation-delay: ${index * 0.08}s">
+                    ${office.photos && office.photos.length > 0 
+                        ? `<img class="office-image" src="${office.photos[0]}" alt="${office.buildingName}" 
+                             onclick="showDetail(${office.id})" style="cursor:pointer"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`
+                        : ''
+                    }
+                    <div class="office-image-placeholder" style="display: ${!office.photos || office.photos.length === 0 ? 'flex' : 'none'}">
+                        暂无图片
+                    </div>
+                    <div class="office-content">
+                        <h3 class="office-name">${office.buildingName}</h3>
+                        <p class="office-config">${office.spaceConfig}</p>
+                        <p class="office-subway">🚇 ${office.subway}</p>
+                        <p class="office-price">¥${office.priceRange}<span>/月</span></p>
+                        <div class="office-actions">
+                            <label class="compare-checkbox">
+                                <input type="checkbox" id="compare-${office.id}" 
+                                       onchange="toggleCompare(${office.id})" 
+                                       ${selectedOffices.has(office.id) ? 'checked' : ''}>
+                                <span>对比</span>
+                            </label>
+                            <button class="detail-btn" onclick="showDetail(${office.id})">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 胶囊筛选点击
+        document.getElementById('filterChips').addEventListener('click', function(e) {
+            if (e.target.classList.contains('chip')) {
+                document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.filter;
+                applyFilter();
+            }
+        });
+
+        // 搜索输入
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            applyFilter();
+        });
+
+        function applyFilter() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            
+            let filtered = officesData;
+
+            // 房型筛选
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(office => office.spaceConfig === currentFilter);
+            }
+
+            // 搜索筛选
+            if (searchText) {
+                filtered = filtered.filter(office => 
+                    office.buildingName.toLowerCase().includes(searchText) ||
+                    office.spaceConfig.toLowerCase().includes(searchText) ||
+                    office.subway.toLowerCase().includes(searchText)
+                );
+            }
+
+            renderOffices(filtered);
+        }
+
+        function toggleCompare(officeId) {
+            if (selectedOffices.has(officeId)) {
+                selectedOffices.delete(officeId);
+            } else {
+                if (selectedOffices.size >= 3) {
+                    alert('最多只能选择 3 个房源进行对比');
+                    document.getElementById(`compare-${officeId}`).checked = false;
+                    return;
+                }
+                selectedOffices.add(officeId);
+            }
+            updateCompareBar();
+        }
+
+        function updateCompareBar() {
+            const compareBar = document.getElementById('compareBar');
+            const compareCount = document.getElementById('compareCount');
+            
+            compareCount.textContent = selectedOffices.size;
+            
+            if (selectedOffices.size > 0) {
+                compareBar.classList.add('visible');
+            } else {
+                compareBar.classList.remove('visible');
+            }
+        }
+
+        function showDetail(officeId) {
+            const office = officesData.find(o => o.id === officeId);
+            if (!office) return;
+
+            document.getElementById('detailTitle').textContent = office.buildingName;
+            
+            const detailBody = document.getElementById('detailBody');
+            detailBody.innerHTML = `
+                ${office.photos && office.photos.length > 0 
+                    ? `<img class="detail-image" src="${office.photos[0]}" alt="${office.buildingName}"
+                         onerror="this.style.display='none';">`
+                    : ''
+                }
+                
+                <div class="detail-section">
+                    <div class="detail-section-title">基本信息</div>
+                    <div class="detail-info">
+                        <div class="detail-tag"><strong>价格</strong> ¥${office.priceRange}</div>
+                        <div class="detail-tag"><strong>房型</strong> ${office.spaceConfig}</div>
+                        <div class="detail-tag"><strong>面积</strong> ${office.area ? office.area + '㎡' : office.areaNote}</div>
+                        <div class="detail-tag"><strong>地铁</strong> ${office.subway}</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">优缺点分析</div>
+                    <div class="detail-pros-cons">
+                        <div class="detail-pros">
+                            <h4>优点</h4>
+                            <ul>
+                                ${office.advantages.map(advantage => `<li>${advantage}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="detail-cons">
+                            <h4>缺点</h4>
+                            <ul>
+                                ${office.disadvantages.map(disadvantage => `<li>${disadvantage}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('detailModal').style.display = 'block';
+        }
+
+        function showComparison() {
+            if (selectedOffices.size === 0) return;
+
+            const selectedOfficesList = Array.from(selectedOffices).map(id => 
+                officesData.find(office => office.id === id)
+            );
+
+            const compareGrid = document.getElementById('compareGrid');
+            compareGrid.innerHTML = selectedOfficesList.map(office => `
+                <div class="compare-card">
+                    <h3>${office.buildingName}</h3>
+                    <div class="compare-row">
+                        <div class="compare-label">价格</div>
+                        <div class="compare-value">¥${office.priceRange}</div>
+                    </div>
+                    <div class="compare-row">
+                        <div class="compare-label">房型配置</div>
+                        <div class="compare-value">${office.spaceConfig}</div>
+                    </div>
+                    <div class="compare-row">
+                        <div class="compare-label">面积</div>
+                        <div class="compare-value">${office.area ? office.area + '㎡' : office.areaNote}</div>
+                    </div>
+                    <div class="compare-row">
+                        <div class="compare-label">地铁</div>
+                        <div class="compare-value">${office.subway}</div>
+                    </div>
+                    <div class="compare-row">
+                        <div class="compare-label">优点</div>
+                        <div class="compare-value">${office.advantages.join('、')}</div>
+                    </div>
+                    <div class="compare-row">
+                        <div class="compare-label">缺点</div>
+                        <div class="compare-value">${office.disadvantages.join('、')}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('compareModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

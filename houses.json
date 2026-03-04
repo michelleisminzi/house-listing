@@ -1,0 +1,121 @@
+{
+  "offices": [
+    {
+      "id": 1,
+      "buildingName": "华润置地 WeWork",
+      "priceRange": "70000+",
+      "spaceConfig": "1+1（1工区+1会议室）",
+      "workAreas": 1,
+      "meetingRooms": 1,
+      "area": null,
+      "areaNote": "无明确数字",
+      "subway": "1号线高新园站，步行10分钟",
+      "advantages": [
+        "全球标准化管理",
+        "大厦物业好"
+      ],
+      "disadvantages": [
+        "办公室灯光色调昏暗",
+        "隐形消费不可控（如空调加时费用、会议室使用费用）"
+      ],
+      "photos": [
+        "photos/房源1_华润置地wework/工区.jpg"
+      ]
+    },
+    {
+      "id": 2,
+      "buildingName": "康泰创新广场",
+      "priceRange": "30000+",
+      "spaceConfig": "1+2（1工区+2会议室）",
+      "workAreas": 1,
+      "meetingRooms": 2,
+      "area": null,
+      "areaNote": "不明确",
+      "subway": "1号线高新园站，步行10分钟",
+      "advantages": [
+        "开发商自有租赁",
+        "共享免费会议室",
+        "无隐形费用"
+      ],
+      "disadvantages": [
+        "开会需穿梭于各个楼层"
+      ],
+      "photos": [
+        "photos/房源2_康泰创新广场/工区.jpg"
+      ]
+    },
+    {
+      "id": 3,
+      "buildingName": "a8大厦-创富港",
+      "priceRange": "16000-17000",
+      "spaceConfig": "1+2（2工区+1会议室）",
+      "workAreas": 2,
+      "meetingRooms": 1,
+      "area": 130,
+      "areaNote": "建筑面积",
+      "subway": "9号线深大南站，步行10分钟",
+      "advantages": [
+        "办公室布局合理",
+        "采光通透",
+        "可规划办公讨论区域"
+      ],
+      "disadvantages": [
+        "办公设备差（办公桌+椅子）",
+        "需考虑滨海大道噪音"
+      ],
+      "photos": [
+        "photos/房源3_a8大厦-创富港/工区1.jpg",
+        "photos/房源3_a8大厦-创富港/工区2.jpg",
+        "photos/房源3_a8大厦-创富港/会议室.jpg",
+        "photos/房源3_a8大厦-创富港/介绍.jpg"
+      ]
+    },
+    {
+      "id": 4,
+      "buildingName": "盈峰大厦",
+      "priceRange": "待确认",
+      "spaceConfig": "1+2（1工区+2会议室）",
+      "workAreas": 1,
+      "meetingRooms": 2,
+      "area": 130,
+      "areaNote": "建筑面积",
+      "subway": "9号线深大南站，步行10分钟",
+      "advantages": [
+        "24小时空调供应",
+        "按实际使用计算电费",
+        "员工食堂"
+      ],
+      "disadvantages": [
+        "无办公设备"
+      ],
+      "photos": [
+        "photos/房源4_盈峰大厦/工区.jpg",
+        "photos/房源4_盈峰大厦/会议室1.jpg",
+        "photos/房源4_盈峰大厦/会议室2.jpg"
+      ]
+    },
+    {
+      "id": 5,
+      "buildingName": "航天科技广场-寰图",
+      "priceRange": "20000",
+      "spaceConfig": "1（1工区）",
+      "workAreas": 1,
+      "meetingRooms": 0,
+      "area": null,
+      "areaNote": "16个工位",
+      "subway": "2号线后海站，步行100米",
+      "advantages": [
+        "交通便利",
+        "物业管理水平较高",
+        "升降桌"
+      ],
+      "disadvantages": [
+        "空间略小",
+        "内部难以规划讨论和会议区域"
+      ],
+      "photos": [
+        "photos/房源5_航天科技广场-寰图/工区.jpg"
+      ]
+    }
+  ]
+}
