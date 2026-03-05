@@ -18,8 +18,12 @@
         "办公室灯光色调昏暗",
         "隐形消费不可控（如空调加时费用、会议室使用费用）"
       ],
+      "officeType": "联合办公",
       "photos": [
-        "photos/房源1_华润置地wework/工区.jpg"
+        "photos/房源1_华润置地-wework/工区.jpg",
+        "photos/房源1_华润置地-wework/户型图.jpg",
+        "photos/房源1_华润置地-wework/共享会议室.jpg",
+        "photos/房源1_华润置地-wework/wework 大堂.jpg"
       ]
     },
     {
@@ -40,6 +44,7 @@
       "disadvantages": [
         "开会需穿梭于各个楼层"
       ],
+      "officeType": "独立办公室",
       "photos": [
         "photos/房源2_康泰创新广场/工区.jpg"
       ]
@@ -48,7 +53,7 @@
       "id": 3,
       "buildingName": "a8大厦-创富港",
       "priceRange": "16000-17000",
-      "spaceConfig": "1+2（2工区+1会议室）",
+      "spaceConfig": "2+1（2工区+1会议室）",
       "workAreas": 2,
       "meetingRooms": 1,
       "area": 130,
@@ -63,17 +68,22 @@
         "办公设备差（办公桌+椅子）",
         "需考虑滨海大道噪音"
       ],
+      "officeType": "联合办公",
       "photos": [
-        "photos/房源3_a8大厦-创富港/工区1.jpg",
-        "photos/房源3_a8大厦-创富港/工区2.jpg",
-        "photos/房源3_a8大厦-创富港/会议室.jpg",
-        "photos/房源3_a8大厦-创富港/介绍.jpg"
+        "photos/房源3_A8大厦-创富港/工区主图.jpg",
+        "photos/房源3_A8大厦-创富港/工区1.jpg",
+        "photos/房源3_A8大厦-创富港/工区2.jpg",
+        "photos/房源3_A8大厦-创富港/工区3.jpg",
+        "photos/房源3_A8大厦-创富港/会议室.jpg",
+        "photos/房源3_A8大厦-创富港/会议室2.jpg",
+        "photos/房源3_A8大厦-创富港/共享会议室.jpg",
+        "photos/房源3_A8大厦-创富港/介绍.jpg"
       ]
     },
     {
       "id": 4,
       "buildingName": "盈峰大厦",
-      "priceRange": "待确认",
+      "priceRange": "20000以内",
       "spaceConfig": "1+2（1工区+2会议室）",
       "workAreas": 1,
       "meetingRooms": 2,
@@ -88,10 +98,17 @@
       "disadvantages": [
         "无办公设备"
       ],
+      "officeType": "独立办公室",
       "photos": [
+        "photos/房源4_盈峰大厦/办公室入口.jpg",
         "photos/房源4_盈峰大厦/工区.jpg",
+        "photos/房源4_盈峰大厦/工区 2.jpg",
+        "photos/房源4_盈峰大厦/工区 3.jpg",
         "photos/房源4_盈峰大厦/会议室1.jpg",
-        "photos/房源4_盈峰大厦/会议室2.jpg"
+        "photos/房源4_盈峰大厦/会议室2.jpg",
+        "photos/房源4_盈峰大厦/会议室 3.jpg",
+        "photos/房源4_盈峰大厦/共享会议室.jpg",
+        "photos/房源4_盈峰大厦/共享配套.jpg"
       ]
     },
     {
@@ -113,8 +130,13 @@
         "空间略小",
         "内部难以规划讨论和会议区域"
       ],
+      "officeType": "联合办公",
       "photos": [
-        "photos/房源5_航天科技广场-寰图/工区.jpg"
+        "photos/房源5_航天科技广场-寰图/工区.jpg",
+        "photos/房源5_航天科技广场-寰图/户型图.jpg",
+        "photos/房源5_航天科技广场-寰图/会议室.jpg",
+        "photos/房源5_航天科技广场-寰图/共享会议室.jpg",
+        "photos/房源5_航天科技广场-寰图/电话间.jpg"
       ]
     }
   ]

@@ -16,6 +16,7 @@
             --radius-large: 20px;
             --radius-medium: 12px;
             --radius-pill: 999px;
+            --favorite-color: #FF3B30;
         }
 
         * {
@@ -35,10 +36,16 @@
         /* 顶部标题区 */
         .hero {
             background: white;
-            padding: 60px 20px 24px;
+            padding: 32px 20px 20px;
             position: sticky;
             top: 0;
             z-index: 100;
+        }
+
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
         .hero-title {
@@ -52,6 +59,45 @@
             font-size: 17px;
             color: var(--text-secondary);
             font-weight: 400;
+        }
+
+        .favorite-entry-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: white;
+            border: 1.5px solid #E5E5E5;
+            border-radius: var(--radius-pill);
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .favorite-entry-btn:hover {
+            border-color: var(--favorite-color);
+            color: var(--favorite-color);
+        }
+
+        .favorite-entry-btn .fav-heart {
+            font-size: 16px;
+            color: var(--favorite-color);
+        }
+
+        .favorite-entry-btn .fav-badge {
+            background: var(--favorite-color);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            line-height: 16px;
         }
 
         /* 搜索框 */
@@ -181,6 +227,7 @@
             opacity: 0;
             transform: translateY(20px);
             animation: cardEnter 0.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+            position: relative;
         }
 
         .office-card:hover {
@@ -200,6 +247,11 @@
         .office-card:nth-child(3) { animation-delay: 0.16s; }
         .office-card:nth-child(4) { animation-delay: 0.24s; }
         .office-card:nth-child(5) { animation-delay: 0.32s; }
+
+        .office-image-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
 
         .office-image {
             width: 100%;
@@ -223,6 +275,62 @@
             justify-content: center;
             color: var(--text-secondary);
             font-size: 14px;
+        }
+
+        /* 收藏按钮 */
+        .favorite-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            z-index: 5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .favorite-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-btn:active {
+            transform: scale(0.95);
+        }
+
+        .favorite-btn svg {
+            width: 22px;
+            height: 22px;
+            transition: all 0.25s ease;
+        }
+
+        .favorite-btn .heart-outline {
+            stroke: #999;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .favorite-btn.favorited .heart-outline {
+            stroke: var(--favorite-color);
+            fill: var(--favorite-color);
+        }
+
+        @keyframes heartPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .favorite-btn.favorited svg {
+            animation: heartPop 0.35s ease;
         }
 
         .office-content {
@@ -373,6 +481,7 @@
             top: 0;
             background: white;
             z-index: 10;
+            border-radius: var(--radius-large) var(--radius-large) 0 0;
         }
 
         .modal-title {
@@ -409,6 +518,125 @@
             object-fit: cover;
             border-radius: var(--radius-medium);
             margin-bottom: 20px;
+        }
+
+        .detail-images-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .detail-images-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .detail-images-scroll img {
+            flex-shrink: 0;
+            width: 260px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: var(--radius-medium);
+            cursor: pointer;
+            transition: transform 0.25s ease;
+        }
+
+        .detail-images-scroll img:hover {
+            transform: scale(1.05);
+        }
+
+        /* 图片放大查看 */
+        .image-lightbox {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            animation: modalFadeIn 0.25s ease;
+        }
+
+        .lightbox-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .lightbox-content > * {
+            pointer-events: auto;
+        }
+
+        .lightbox-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+            animation: imageZoomIn 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            pointer-events: none;
+        }
+
+        @keyframes imageZoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+        }
+
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .lightbox-nav {
+            display: none;
+        }
+
+        .lightbox-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         .detail-section {
@@ -487,7 +715,7 @@
         }
 
         .detail-pros li::before {
-            content: "✓";
+            content: "\2713";
             position: absolute;
             left: 0;
             color: #2E7D32;
@@ -495,7 +723,7 @@
         }
 
         .detail-cons li::before {
-            content: "✗";
+            content: "\2717";
             position: absolute;
             left: 0;
             color: #C62828;
@@ -517,6 +745,14 @@
             background: var(--bg-primary);
             border-radius: var(--radius-medium);
             padding: 20px;
+        }
+
+        .compare-card-image {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: var(--radius-medium);
+            margin-bottom: 16px;
         }
 
         .compare-card h3 {
@@ -544,6 +780,179 @@
             font-weight: 500;
         }
 
+        /* 收藏列表模态框 */
+        .fav-list-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: var(--bg-primary);
+            border-radius: var(--radius-medium);
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .fav-list-item:hover {
+            background: #ECECEE;
+        }
+
+        .fav-list-checkbox {
+            width: 22px;
+            height: 22px;
+            accent-color: var(--accent);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .fav-list-image {
+            width: 70px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .fav-list-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .fav-list-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fav-list-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .fav-list-remove {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .fav-list-remove:hover {
+            background: #FFE5E5;
+            color: var(--favorite-color);
+        }
+
+        .fav-modal-footer {
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 16px 20px;
+            border-top: 1px solid #F0F0F0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .fav-modal-footer button {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--radius-medium);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            border: none;
+        }
+
+        .fav-btn-clear {
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+        }
+
+        .fav-btn-clear:hover {
+            background: #FFEBEE;
+            color: var(--favorite-color);
+        }
+
+        .fav-btn-compare-all {
+            background: var(--accent);
+            color: white;
+        }
+
+        .fav-btn-compare-all:active {
+            transform: scale(0.98);
+        }
+
+        .fav-btn-compare-selected {
+            background: var(--text-primary);
+            color: white;
+        }
+
+        .fav-btn-compare-selected:active {
+            transform: scale(0.98);
+        }
+
+        .fav-btn-compare-selected:disabled,
+        .fav-btn-compare-all:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .fav-empty {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-secondary);
+        }
+
+        .fav-empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        .fav-empty p {
+            font-size: 15px;
+        }
+
+        .fav-select-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .fav-select-bar label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        .fav-select-bar label input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent);
+        }
+
+        .fav-selected-count {
+            font-size: 14px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
         /* 底部安全区域 */
         .safe-area-bottom {
             height: env(safe-area-inset-bottom, 0);
@@ -552,8 +961,17 @@
 </head>
 <body>
     <div class="hero">
-        <h1 class="hero-title">找办公室</h1>
-        <p class="hero-subtitle" id="resultCount">5 个优质空间</p>
+        <div class="hero-top">
+            <div>
+                <h1 class="hero-title">找办公室</h1>
+                <p class="hero-subtitle" id="resultCount">5 个优质空间</p>
+            </div>
+            <button class="favorite-entry-btn" onclick="showFavorites()">
+                <span class="fav-heart">&#9829;</span>
+                <span>收藏</span>
+                <span class="fav-badge" id="favBadge" style="display:none;">0</span>
+            </button>
+        </div>
     </div>
 
     <div class="search-container">
@@ -567,11 +985,9 @@
     </div>
 
     <div class="filter-chips" id="filterChips">
-        <!-- 筛选胶囊将通过JavaScript动态生成 -->
     </div>
 
     <div class="office-list" id="officeList">
-        <!-- 房源卡片将通过JavaScript动态生成 -->
     </div>
 
     <div class="compare-bar" id="compareBar">
@@ -585,7 +1001,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title" id="detailTitle">房源详情</h2>
-                <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+                <button class="modal-close" onclick="closeModal('detailModal')">&#10005;</button>
             </div>
             <div class="modal-body" id="detailBody">
             </div>
@@ -597,7 +1013,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 class="modal-title">房源对比</h2>
-                <button class="modal-close" onclick="closeModal('compareModal')">✕</button>
+                <button class="modal-close" onclick="closeModal('compareModal')">&#10005;</button>
             </div>
             <div class="modal-body">
                 <div class="compare-scroll" id="compareGrid">
@@ -606,30 +1022,105 @@
         </div>
     </div>
 
+    <!-- 图片放大查看模态框 -->
+    <div id="imageLightbox" class="image-lightbox" onclick="closeLightbox(event)">
+        <div class="lightbox-content">
+            <img id="lightboxImage" class="lightbox-image" src="" alt="">
+            <button class="lightbox-nav prev" id="lightboxPrev" onclick="navigateLightbox(-1, event)">&#8249;</button>
+            <button class="lightbox-nav next" id="lightboxNext" onclick="navigateLightbox(1, event)">&#8250;</button>
+            <div class="lightbox-counter" id="lightboxCounter">1 / 1</div>
+            <button class="lightbox-close" onclick="closeLightbox(event)">&#10005;</button>
+        </div>
+    </div>
+
+    <!-- 收藏列表模态框 -->
+    <div id="favModal" class="modal">
+        <div class="modal-content" style="display:flex;flex-direction:column;">
+            <div class="modal-header">
+                <h2 class="modal-title" id="favModalTitle">我的收藏</h2>
+                <button class="modal-close" onclick="closeModal('favModal')">&#10005;</button>
+            </div>
+            <div class="modal-body" id="favModalBody" style="flex:1;overflow-y:auto;">
+            </div>
+            <div class="fav-modal-footer" id="favModalFooter">
+            </div>
+        </div>
+    </div>
+
     <script>
         let officesData = [];
         let selectedOffices = new Set();
         let currentFilter = 'all';
+        let favorites = new Set();
+        let favSelectedForCompare = new Set();
+        let currentLightboxImages = [];
+        let currentLightboxIndex = 0;
+
+        // 从 localStorage 加载收藏
+        function loadFavorites() {
+            try {
+                const saved = localStorage.getItem('office_favorites');
+                if (saved) {
+                    favorites = new Set(JSON.parse(saved));
+                }
+            } catch (e) {
+                favorites = new Set();
+            }
+            updateFavBadge();
+        }
+
+        // 保存收藏到 localStorage
+        function saveFavorites() {
+            localStorage.setItem('office_favorites', JSON.stringify([...favorites]));
+            updateFavBadge();
+        }
+
+        // 更新收藏角标
+        function updateFavBadge() {
+            const badge = document.getElementById('favBadge');
+            if (favorites.size > 0) {
+                badge.style.display = 'inline-block';
+                badge.textContent = favorites.size;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // 切换收藏
+        function toggleFavorite(officeId, event) {
+            if (event) event.stopPropagation();
+            if (favorites.has(officeId)) {
+                favorites.delete(officeId);
+            } else {
+                favorites.add(officeId);
+            }
+            saveFavorites();
+            // 更新按钮状态
+            const btn = document.querySelector(`.favorite-btn[data-id="${officeId}"]`);
+            if (btn) {
+                btn.classList.toggle('favorited', favorites.has(officeId));
+            }
+        }
 
         async function loadData() {
             try {
                 const response = await fetch('houses.json');
                 const data = await response.json();
                 officesData = data.offices;
+                loadFavorites();
                 initFilterChips();
                 renderOffices(officesData);
             } catch (error) {
                 console.error('加载数据失败:', error);
                 document.getElementById('officeList').innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">📭</div>
+                        <div class="empty-state-icon">&#128237;</div>
                         <p>数据加载失败，请刷新页面重试</p>
                     </div>
                 `;
             }
         }
 
-        // 初始化筛选胶囊
         function initFilterChips() {
             const configs = [...new Set(officesData.map(office => office.spaceConfig))];
             const chipsHtml = `
@@ -645,7 +1136,7 @@
             if (offices.length === 0) {
                 list.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">🔍</div>
+                        <div class="empty-state-icon">&#128269;</div>
                         <p>没有找到符合条件的房源</p>
                     </div>
                 `;
@@ -657,19 +1148,28 @@
 
             list.innerHTML = offices.map((office, index) => `
                 <div class="office-card" style="animation-delay: ${index * 0.08}s">
-                    ${office.photos && office.photos.length > 0 
-                        ? `<img class="office-image" src="${office.photos[0]}" alt="${office.buildingName}" 
-                             onclick="showDetail(${office.id})" style="cursor:pointer"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">`
-                        : ''
-                    }
-                    <div class="office-image-placeholder" style="display: ${!office.photos || office.photos.length === 0 ? 'flex' : 'none'}">
-                        暂无图片
+                    <div class="office-image-wrapper">
+                        ${office.photos && office.photos.length > 0 
+                            ? `<img class="office-image" src="${office.photos[0]}" alt="${office.buildingName}" 
+                                 onclick="showDetail(${office.id})" style="cursor:pointer"
+                                 onerror="this.style.display='none'; this.closest('.office-image-wrapper').querySelector('.office-image-placeholder').style.display='flex';">`
+                            : ''
+                        }
+                        <div class="office-image-placeholder" style="display: ${!office.photos || office.photos.length === 0 ? 'flex' : 'none'}">
+                            暂无图片
+                        </div>
+                        <button class="favorite-btn ${favorites.has(office.id) ? 'favorited' : ''}" 
+                                data-id="${office.id}"
+                                onclick="toggleFavorite(${office.id}, event)">
+                            <svg viewBox="0 0 24 24">
+                                <path class="heart-outline" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                            </svg>
+                        </button>
                     </div>
                     <div class="office-content">
                         <h3 class="office-name">${office.buildingName}</h3>
-                        <p class="office-config">${office.spaceConfig}</p>
-                        <p class="office-subway">🚇 ${office.subway}</p>
+                        <p class="office-config">${office.spaceConfig} · ${office.officeType || ''}</p>
+                        <p class="office-subway">&#128647; ${office.subway}</p>
                         <p class="office-price">¥${office.priceRange}<span>/月</span></p>
                         <div class="office-actions">
                             <label class="compare-checkbox">
@@ -685,7 +1185,6 @@
             `).join('');
         }
 
-        // 胶囊筛选点击
         document.getElementById('filterChips').addEventListener('click', function(e) {
             if (e.target.classList.contains('chip')) {
                 document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
@@ -695,22 +1194,18 @@
             }
         });
 
-        // 搜索输入
         document.getElementById('searchInput').addEventListener('input', function(e) {
             applyFilter();
         });
 
         function applyFilter() {
             const searchText = document.getElementById('searchInput').value.toLowerCase();
-            
             let filtered = officesData;
 
-            // 房型筛选
             if (currentFilter !== 'all') {
                 filtered = filtered.filter(office => office.spaceConfig === currentFilter);
             }
 
-            // 搜索筛选
             if (searchText) {
                 filtered = filtered.filter(office => 
                     office.buildingName.toLowerCase().includes(searchText) ||
@@ -739,9 +1234,7 @@
         function updateCompareBar() {
             const compareBar = document.getElementById('compareBar');
             const compareCount = document.getElementById('compareCount');
-            
             compareCount.textContent = selectedOffices.size;
-            
             if (selectedOffices.size > 0) {
                 compareBar.classList.add('visible');
             } else {
@@ -758,8 +1251,13 @@
             const detailBody = document.getElementById('detailBody');
             detailBody.innerHTML = `
                 ${office.photos && office.photos.length > 0 
-                    ? `<img class="detail-image" src="${office.photos[0]}" alt="${office.buildingName}"
-                         onerror="this.style.display='none';">`
+                    ? `<div class="detail-images-scroll">
+                        ${office.photos.map((photo, idx) => `
+                            <img src="${photo}" alt="${office.buildingName}" 
+                                 onclick="openLightbox(${idx})"
+                                 onerror="this.style.display='none';">
+                        `).join('')}
+                       </div>`
                     : ''
                 }
                 
@@ -767,6 +1265,7 @@
                     <div class="detail-section-title">基本信息</div>
                     <div class="detail-info">
                         <div class="detail-tag"><strong>价格</strong> ¥${office.priceRange}</div>
+                        <div class="detail-tag"><strong>性质</strong> ${office.officeType || '未知'}</div>
                         <div class="detail-tag"><strong>房型</strong> ${office.spaceConfig}</div>
                         <div class="detail-tag"><strong>面积</strong> ${office.area ? office.area + '㎡' : office.areaNote}</div>
                         <div class="detail-tag"><strong>地铁</strong> ${office.subway}</div>
@@ -795,20 +1294,22 @@
             document.getElementById('detailModal').style.display = 'block';
         }
 
-        function showComparison() {
-            if (selectedOffices.size === 0) return;
-
-            const selectedOfficesList = Array.from(selectedOffices).map(id => 
-                officesData.find(office => office.id === id)
-            );
-
-            const compareGrid = document.getElementById('compareGrid');
-            compareGrid.innerHTML = selectedOfficesList.map(office => `
+        function renderCompareCards(officesList) {
+            return officesList.map(office => `
                 <div class="compare-card">
+                    ${office.photos && office.photos.length > 0 
+                        ? `<img class="compare-card-image" src="${office.photos[0]}" alt="${office.buildingName}"
+                             onerror="this.style.display='none';">`
+                        : ''
+                    }
                     <h3>${office.buildingName}</h3>
                     <div class="compare-row">
                         <div class="compare-label">价格</div>
                         <div class="compare-value">¥${office.priceRange}</div>
+                    </div>
+                    <div class="compare-row">
+                        <div class="compare-label">办公性质</div>
+                        <div class="compare-value">${office.officeType || '未知'}</div>
                     </div>
                     <div class="compare-row">
                         <div class="compare-label">房型配置</div>
@@ -832,12 +1333,288 @@
                     </div>
                 </div>
             `).join('');
+        }
 
+        function showComparison() {
+            if (selectedOffices.size === 0) return;
+
+            const selectedOfficesList = Array.from(selectedOffices).map(id => 
+                officesData.find(office => office.id === id)
+            ).filter(Boolean);
+
+            const compareGrid = document.getElementById('compareGrid');
+            compareGrid.innerHTML = renderCompareCards(selectedOfficesList);
+            document.getElementById('compareModal').style.display = 'block';
+        }
+
+        // 收藏列表相关
+        function showFavorites() {
+            favSelectedForCompare = new Set([...favorites]);
+            renderFavModal();
+            document.getElementById('favModal').style.display = 'block';
+        }
+
+        function renderFavModal() {
+            const body = document.getElementById('favModalBody');
+            const footer = document.getElementById('favModalFooter');
+            const favIds = [...favorites];
+            const favOffices = favIds.map(id => officesData.find(o => o.id === id)).filter(Boolean);
+
+            document.getElementById('favModalTitle').textContent = `我的收藏 (${favOffices.length})`;
+
+            if (favOffices.length === 0) {
+                body.innerHTML = `
+                    <div class="fav-empty">
+                        <div class="fav-empty-icon">&#9825;</div>
+                        <p>还没有收藏任何房源</p>
+                        <p style="margin-top:6px;font-size:13px;">浏览房源时点击心形按钮即可收藏</p>
+                    </div>
+                `;
+                footer.innerHTML = '';
+                return;
+            }
+
+            const allChecked = favSelectedForCompare.size === favOffices.length;
+            const selectedCount = [...favSelectedForCompare].filter(id => favorites.has(id)).length;
+
+            body.innerHTML = `
+                <div class="fav-select-bar">
+                    <label>
+                        <input type="checkbox" ${allChecked ? 'checked' : ''} onchange="toggleAllFavSelect(this.checked)">
+                        全选
+                    </label>
+                    <span class="fav-selected-count">已选 ${selectedCount} 项</span>
+                </div>
+                ${favOffices.map(office => `
+                    <div class="fav-list-item">
+                        <input type="checkbox" class="fav-list-checkbox" 
+                               ${favSelectedForCompare.has(office.id) ? 'checked' : ''}
+                               onchange="toggleFavSelect(${office.id}, this.checked)">
+                        ${office.photos && office.photos.length > 0
+                            ? `<img class="fav-list-image" src="${office.photos[0]}" alt="${office.buildingName}" onerror="this.style.display='none';">`
+                            : ''
+                        }
+                        <div class="fav-list-info">
+                            <div class="fav-list-name">${office.buildingName}</div>
+                            <div class="fav-list-meta">¥${office.priceRange}/月 · ${office.spaceConfig}</div>
+                        </div>
+                        <button class="fav-list-remove" onclick="removeFavorite(${office.id})" title="取消收藏">&#10005;</button>
+                    </div>
+                `).join('')}
+            `;
+
+            footer.innerHTML = `
+                <button class="fav-btn-compare-all" onclick="compareFavAll()" ${favOffices.length < 2 ? 'disabled' : ''}>
+                    对比全部 (${favOffices.length})
+                </button>
+                <button class="fav-btn-compare-selected" onclick="compareFavSelected()" ${selectedCount < 2 ? 'disabled' : ''}>
+                    对比已选 (${selectedCount})
+                </button>
+            `;
+        }
+
+        function toggleAllFavSelect(checked) {
+            if (checked) {
+                favorites.forEach(id => favSelectedForCompare.add(id));
+            } else {
+                favSelectedForCompare.clear();
+            }
+            renderFavModal();
+        }
+
+        function toggleFavSelect(officeId, checked) {
+            if (checked) {
+                favSelectedForCompare.add(officeId);
+            } else {
+                favSelectedForCompare.delete(officeId);
+            }
+            renderFavModal();
+        }
+
+        function removeFavorite(officeId) {
+            favorites.delete(officeId);
+            favSelectedForCompare.delete(officeId);
+            saveFavorites();
+            // 更新卡片上的收藏按钮
+            const btn = document.querySelector(`.favorite-btn[data-id="${officeId}"]`);
+            if (btn) btn.classList.remove('favorited');
+            renderFavModal();
+        }
+
+        function clearAllFavorites() {
+            if (!confirm('确定要清空所有收藏吗？')) return;
+            favorites.clear();
+            favSelectedForCompare.clear();
+            saveFavorites();
+            // 更新所有卡片上的收藏按钮
+            document.querySelectorAll('.favorite-btn.favorited').forEach(btn => btn.classList.remove('favorited'));
+            renderFavModal();
+        }
+
+        function compareFavAll() {
+            const favOffices = [...favorites].map(id => officesData.find(o => o.id === id)).filter(Boolean);
+            if (favOffices.length < 2) return;
+            const compareGrid = document.getElementById('compareGrid');
+            compareGrid.innerHTML = renderCompareCards(favOffices);
+            closeModal('favModal');
+            document.getElementById('compareModal').style.display = 'block';
+        }
+
+        function compareFavSelected() {
+            const selectedIds = [...favSelectedForCompare].filter(id => favorites.has(id));
+            const selectedList = selectedIds.map(id => officesData.find(o => o.id === id)).filter(Boolean);
+            if (selectedList.length < 2) return;
+            const compareGrid = document.getElementById('compareGrid');
+            compareGrid.innerHTML = renderCompareCards(selectedList);
+            closeModal('favModal');
             document.getElementById('compareModal').style.display = 'block';
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openLightbox(index) {
+            const detailImages = document.querySelectorAll('.detail-images-scroll img');
+            currentLightboxImages = Array.from(detailImages).map(img => img.src);
+            currentLightboxIndex = (typeof index === 'number' && index >= 0 && index < currentLightboxImages.length) ? index : 0;
+
+            showLightboxImage();
+
+            const lightbox = document.getElementById('imageLightbox');
+            lightbox.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showLightboxImage() {
+            const lightboxImage = document.getElementById('lightboxImage');
+            const counter = document.getElementById('lightboxCounter');
+
+            lightboxImage.src = currentLightboxImages[currentLightboxIndex];
+            counter.textContent = `${currentLightboxIndex + 1} / ${currentLightboxImages.length}`;
+
+            if (currentLightboxImages.length <= 1) {
+                counter.style.display = 'none';
+            } else {
+                counter.style.display = 'block';
+            }
+        }
+
+        function navigateLightbox(direction, event) {
+            if (event) event.stopPropagation();
+
+            const newIndex = currentLightboxIndex + direction;
+            if (newIndex >= 0 && newIndex < currentLightboxImages.length) {
+                currentLightboxIndex = newIndex;
+                showLightboxImage();
+            }
+        }
+
+        function closeLightbox(event) {
+            if (hasSwiped) {
+                hasSwiped = false;
+                return;
+            }
+            const target = event.target;
+            if (target.id === 'imageLightbox' || target.classList.contains('lightbox-close') || target.closest('.lightbox-close')) {
+                const lightbox = document.getElementById('imageLightbox');
+                lightbox.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        // 滑动切换图片
+        let touchStartX = 0;
+        let isDragging = false;
+        let hasSwiped = false;
+        let wheelDeltaX = 0;
+        let wheelTimer = null;
+
+        function initLightboxSwipe() {
+            const lightbox = document.getElementById('imageLightbox');
+
+            // 触摸板双指滑动 / 鼠标滚轮横向滚动
+            lightbox.addEventListener('wheel', (e) => {
+                if (lightbox.style.display !== 'block') return;
+                e.preventDefault();
+
+                wheelDeltaX += e.deltaX;
+
+                clearTimeout(wheelTimer);
+                wheelTimer = setTimeout(() => {
+                    if (Math.abs(wheelDeltaX) > 30) {
+                        if (wheelDeltaX > 0) {
+                            navigateLightbox(1);
+                        } else {
+                            navigateLightbox(-1);
+                        }
+                    }
+                    wheelDeltaX = 0;
+                }, 80);
+            }, { passive: false });
+
+            // 触摸事件（移动端）
+            lightbox.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                isDragging = true;
+                hasSwiped = false;
+            }, { passive: true });
+
+            lightbox.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const diff = Math.abs(e.changedTouches[0].screenX - touchStartX);
+                if (diff > 10) hasSwiped = true;
+            }, { passive: true });
+
+            lightbox.addEventListener('touchend', (e) => {
+                if (isDragging) {
+                    const touchEndX = e.changedTouches[0].screenX;
+                    const diff = touchStartX - touchEndX;
+                    if (Math.abs(diff) > 50) {
+                        navigateLightbox(diff > 0 ? 1 : -1);
+                        hasSwiped = true;
+                    }
+                    isDragging = false;
+                }
+            }, { passive: true });
+
+            // 鼠标拖拽（桌面端点击拖动）
+            lightbox.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.lightbox-close') || e.target.closest('.lightbox-counter')) return;
+                touchStartX = e.screenX;
+                isDragging = true;
+                hasSwiped = false;
+            });
+
+            lightbox.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const diff = Math.abs(e.screenX - touchStartX);
+                    if (diff > 10) hasSwiped = true;
+                }
+            });
+
+            lightbox.addEventListener('mouseup', (e) => {
+                if (isDragging) {
+                    const touchEndX = e.screenX;
+                    const diff = touchStartX - touchEndX;
+                    if (Math.abs(diff) > 50) {
+                        navigateLightbox(diff > 0 ? 1 : -1);
+                        hasSwiped = true;
+                    }
+                    isDragging = false;
+                }
+            });
+
+            // 键盘左右方向键
+            document.addEventListener('keydown', (e) => {
+                if (lightbox.style.display !== 'block') return;
+                if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                if (e.key === 'ArrowRight') navigateLightbox(1);
+                if (e.key === 'Escape') {
+                    lightbox.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            });
         }
 
         window.onclick = function(event) {
@@ -846,7 +1623,10 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadData);
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            initLightboxSwipe();
+        });
     </script>
 </body>
 </html>
